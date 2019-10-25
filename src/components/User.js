@@ -1,6 +1,7 @@
 import React from 'react';
 
 
+
 const User = (props) => {
     const {min, src, alt, name} = props;
     return ( 
