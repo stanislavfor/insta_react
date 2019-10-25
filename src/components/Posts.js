@@ -1,29 +1,74 @@
-import React, {
-    Component
-} from 'react';
-import Post from './Post';
+import React, {Component} from 'react';
+import InstaService from '../services/instaService';
+import User from './User';
+import ErrorMessage from './Error';
 
 export default class Posts extends Component {
+    InstaService = new InstaService();
+    state = {
+        posts: [],
+        error: false
+    }
+
+    componentDidMount() {
+        this.updatePosts();
+    }
+
+    updatePosts() {
+        this.InstaService.getAllPosts()
+        .then(this.onPostsLoaded)
+        .catch(this.onError);
+    }
+
+    onPostsLoaded = (posts) => {
+        this.setState({
+            posts,
+            error: false
+        })
+        console.log(this.state.posts);
+    }
+
+    onError = () => {
+        this.setState({
+            error: true
+            
+        })
+    }
+
+    renderItems(arr) {
+        return arr.map(item => {
+            const {name, altname, photo, src, alt, descr, id} = item;
+
+            return ( 
+                <div key={id} className="post">
+                    <User src={photo} alt={altname} name={name} min/ >
+                    <img src={src} alt={alt}></img> 
+                    <div className="post__name">
+                        {name}
+                    </div> 
+                    <div className="post__descr">
+                        {descr}
+                    </div> 
+                </div>
+            )
+        });
+    }
+
     render() {
-        return ( <
-            div className = "left" >
-            <
-            Post src = "https://images.pexels.com/photos/1246078/pexels-photo-1246078.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-            alt = "inst" / >
-            <
-            Post src = "https://images.pexels.com/photos/1791241/pexels-photo-1791241.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-            alt = "second" / >
-            <
-            Post src = "https://images.pexels.com/photos/286588/pexels-photo-286588.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-            alt = "third" / >
-            <
-            Post src = "https://images.pexels.com/photos/3012724/pexels-photo-3012724.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260"
-            alt = "fourth" / >
-            <
-            Post src = "https://cdn.wallpapersafari.com/20/74/rZ5GTq.jpg"
-            alt = "fifth" / >
-            <
-            /div>
+        const {
+            error,
+            posts
+        } = this.state;
+
+        if (error) {
+            return <ErrorMessage / >
+        }
+
+        const items = this.renderItems(posts);
+        return ( 
+            <div className="left">
+                {items}
+            </div>
         )
     }
 }
